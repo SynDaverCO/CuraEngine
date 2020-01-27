@@ -7,7 +7,10 @@ project(CuraEngine)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-option(ENABLE_ARCUS "Enable support for ARCUS" ON)
+##################################################################
+# Turned off ARCUS support - Added by marcio.teixeira@syndaver.com
+option(ENABLE_ARCUS "Enable support for ARCUS" OFF)
+##################################################################
 
 if (MSVC)
     option(MSVC_STATIC_RUNTIME "Link the MSVC runtime statically" OFF)
@@ -44,6 +47,14 @@ if(CMAKE_BUILD_TYPE_UPPER MATCHES "DEBUG")
 else()
     set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_RELEASE_INIT})
 endif()
+
+##################################################################
+# Add EMSCRIPTEN options - Added by marcio.teixeira@syndaver.com
+if (${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ../../resources -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1")
+    set(CMAKE_EXECUTABLE_SUFFIX ".js")
+endif ()
+##################################################################
 
 set(CMAKE_CXX_STANDARD 11)
 
