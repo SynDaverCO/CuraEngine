@@ -309,7 +309,7 @@ void FffPolygonGenerator::slices2polygons(SliceDataStorage& storage, TimeKeeper&
         std::multimap<int, size_t> order_to_mesh_indices;
         for (size_t mesh_idx = 0; mesh_idx < storage.meshes.size(); mesh_idx++)
         {
-            order_to_mesh_indices.emplace(storage.meshes[mesh_idx].settings.get<size_t>("infill_mesh_order"), mesh_idx);
+            order_to_mesh_indices.emplace(storage.meshes[mesh_idx].settings.get<int>("infill_mesh_order"), mesh_idx);
         }
         for (std::pair<const int, size_t>& order_and_mesh_idx : order_to_mesh_indices)
         {
@@ -1092,6 +1092,11 @@ void FffPolygonGenerator::processFuzzyWalls(SliceMeshStorage& mesh)
             Polygons& skin = (mesh.settings.get<ESurfaceMode>("magic_mesh_surface_mode") == ESurfaceMode::SURFACE)? part.outline : part.insets[0];
             for (PolygonRef poly : skin)
             {
+                if (mesh.settings.get<bool>("magic_fuzzy_skin_outside_only") && poly.area() < 0)
+                {
+                    results.add(poly);
+                    continue;
+                }
                 // generate points in between p0 and p1
                 PolygonRef result = results.newPoly();
 
