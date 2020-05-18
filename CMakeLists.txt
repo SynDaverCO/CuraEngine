@@ -55,7 +55,12 @@ endif()
 ##################################################################
 # Add EMSCRIPTEN options - Added by marcio.teixeira@syndaver.com
 if (${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ../../resources -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1")
+    if(CMAKE_BUILD_TYPE_UPPER MATCHES "MINSIZEREL")
+        string(REPLACE "-O3" "-Oz" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --closure 1")
+    endif()
+    message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1")
     set(CMAKE_EXECUTABLE_SUFFIX ".js")
 endif ()
 ##################################################################
